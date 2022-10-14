@@ -37,8 +37,5 @@ RSpec.describe "Integration" do
         menu.create_order
     end
     it "sends an order" do
-        io = double :io
-
-        menu = Meal_List.new(io)
     end
 end
