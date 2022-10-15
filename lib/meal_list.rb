@@ -1,9 +1,9 @@
 require 'twilio-ruby'
+require 'dotenv/load'
 
 class Meal_List
     def initialize()
         @menu = []
-        @selection = []
     end
 
     def add(menu_item)
@@ -14,35 +14,28 @@ class Meal_List
         return @menu
     end
 
-    def create_order
-        
-        # THE NUMBER OF ITEMS TO BE ORDERED
-        number_of_orders = @io.gets.to_i
+    def create_order(order)
+        sum = 0
+        meal_summary = order.map { |meal| "#{meal["name"]}: #{meal["price"]}" }
+        order.map { |meal| sum += meal["price"].to_f }
+        @order_summary = "#{meal_summary.join(", ")} = TOTAL: #{sum}"
+    end
 
-        @io.puts "Please enter the items"
-
-        x = 0
-        number_of_orders.times do 
-
-            @selected_meal = @io.gets.chomp
-
-            # SUM OF SELECTED MEAL PRICES
-            @menu.select { |meal| meal["name"] == @selected_meal }.each { |meal| x += meal["price"].to_f}
-
-            # SELECTED MEALS AND PRICES
-            @selection << @menu.select { |meal| meal["name"] == @selected_meal }
-
-        end
-        
-        order_summary = @selection.each.map { |array| "#{array[0]["name"]}: #{array[0]["price"]}" }
-
-        result = "#{order_summary.join(", ")} = TOTAL: #{x}"
-
-        @io.puts result
+    def order_summary
+        return @order_summary
     end
 
     def send_order
-        
-    end
+        t = Time.now + (60*60)
 
+        account_sid = ENV["ACCOUNT_SID"]
+        auth_token = ENV["AUTH_TOKEN"]
+
+        @client = Twilio::REST::Client.new(account_sid, auth_token)
+        message = @client.messages.create(
+            body: "Thank you! Your order was placed and will be delivered before #{t.hour}:#{t.min}",
+            to: "+447312525246",
+            from: "+18588004049")
+        return message.body
+    end
 end
