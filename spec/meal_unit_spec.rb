@@ -25,6 +25,7 @@ RSpec.describe "Integration" do
     it "sends an order" do
         t = Time.now + (60*60)
         menu = Meal_List.new
-        expect(menu.send_order).to eq "Sent from your Twilio trial account - Thank you! Your order was placed and will be delivered before #{t.hour}:#{t.min}"
+        result = menu.create_sms
+        expect(result).to eq "Sent from your Twilio trial account - Thank you! Your order was placed and will be delivered before #{t.hour}:#{t.min}"
     end
 end

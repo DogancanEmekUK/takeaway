@@ -24,13 +24,11 @@ class Meal_List
     def order_summary
         return @order_summary
     end
-
-    def send_order
+    def create_sms
         t = Time.now + (60*60)
 
         account_sid = ENV["ACCOUNT_SID"]
         auth_token = ENV["AUTH_TOKEN"]
-
         @client = Twilio::REST::Client.new(account_sid, auth_token)
         message = @client.messages.create(
             body: "Thank you! Your order was placed and will be delivered before #{t.hour}:#{t.min}",
